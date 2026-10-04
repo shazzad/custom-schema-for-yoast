@@ -25,5 +25,7 @@ final class Plugin {
 		if ( is_admin() ) {
 			( new Admin\MetaBox() )->register();
 		}
+
+		( new Frontend() )->register();
 	}
 }
