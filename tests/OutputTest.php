@@ -21,7 +21,7 @@ final class OutputTest extends TestCase {
 	public function test_keeps_unicode(): void {
 		$json = Output::encode( [ '@type' => 'Thing', 'name' => 'শাজ্জাদ – café' ] );
 		$this->assertStringContainsString( 'শাজ্জাদ – café', $json );
-		$this->assertStringNotContainsString( '&ndash;', $json );
+		$this->assertStringNotContainsString( '\\u2013', $json );
 	}
 
 	public function test_url_slashes_are_escaped(): void {
