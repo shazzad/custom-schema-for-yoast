@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Build build/custom-schema-for-yoast-<version>.zip the way the release workflow does.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+VERSION="$(grep -m1 '^ \* Version:' custom-schema-for-yoast.php | awk '{print $3}')"
+SLUG=custom-schema-for-yoast
+rm -rf build && mkdir -p "build/$SLUG"
+composer install --no-dev --optimize-autoloader --quiet
+rsync -a --delete \
+  --exclude '.git' --exclude '.github' --exclude 'build' --exclude 'bin' --exclude 'tests' \
+  --exclude 'phpunit.xml.dist' --exclude 'phpcs.xml.dist' --exclude 'composer.json' --exclude 'composer.lock' \
+  --exclude '.gitignore' --exclude '.editorconfig' --exclude '.phpunit.result.cache' --exclude 'README.md' \
+  ./ "build/$SLUG/"
+( cd build && if command -v zip >/dev/null 2>&1; then zip -qr "$SLUG-$VERSION.zip" "$SLUG"; else python3 -m zipfile -c "$SLUG-$VERSION.zip" "$SLUG"; fi )
+composer install --quiet   # restore dev deps for local work
+echo "build/$SLUG-$VERSION.zip"
+unzip -l "build/$SLUG-$VERSION.zip" | tail -1
