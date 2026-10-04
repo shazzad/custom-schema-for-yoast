@@ -67,7 +67,7 @@
 	checkJson();
 
 	function template() {
-		var url = data.permalink || 'https://example.com/plugins/example/';
+		var url = data.permalink ? data.permalink : 'https://example.com/plugins/example/';
 		return {
 			'@type': 'SoftwareApplication',
 			'@id': url + '#software',

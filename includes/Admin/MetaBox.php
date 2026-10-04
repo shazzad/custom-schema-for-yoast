@@ -72,12 +72,13 @@ final class MetaBox {
 		wp_enqueue_script( 'csfy-admin', CSFY_URL . 'assets/admin.js', [], CSFY_VERSION, true );
 
 		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, used to prefill a template.
+		$published = $post_id && 'publish' === get_post_status( $post_id );
 		wp_localize_script(
 			'csfy-admin',
 			'csfyData',
 			[
-				'permalink' => $post_id ? get_permalink( $post_id ) : home_url( '/' ),
-				'title'     => $post_id ? get_the_title( $post_id ) : '',
+				'permalink' => $published ? (string) get_permalink( $post_id ) : '',
+				'title'     => $post_id ? get_post_field( 'post_title', $post_id ) : '',
 				'confirm'   => __( 'Replace the current JSON with the template?', 'custom-schema-for-yoast' ),
 			]
 		);
