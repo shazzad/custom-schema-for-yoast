@@ -87,4 +87,34 @@ final class ValidatorTest extends TestCase {
 		$this->assertFalse( $r->ok );
 		$this->assertSame( 'Node 1 has no "@type".', $r->error );
 	}
+
+	public function test_empty_array_object_and_graph_are_ok_and_empty(): void {
+		foreach ( [ '[]', '{}', '{"@graph":[]}' ] as $raw ) {
+			$r = Validator::parse( $raw );
+			$this->assertTrue( $r->ok, $raw );
+			$this->assertTrue( $r->is_empty(), $raw );
+			$this->assertSame( [], $r->nodes, $raw );
+		}
+	}
+
+	public function test_array_type_is_accepted(): void {
+		$r = Validator::parse( '{"@type":["SoftwareApplication","Product"],"name":"x"}' );
+		$this->assertTrue( $r->ok );
+		$this->assertSame( [ 'SoftwareApplication', 'Product' ], $r->nodes[0]['@type'] );
+	}
+
+	public function test_node_level_context_is_stripped_in_all_shapes(): void {
+		$single = Validator::parse( '{"@context":"https://schema.org","@type":"Thing","name":"a"}' );
+		$this->assertTrue( $single->ok );
+		$this->assertArrayNotHasKey( '@context', $single->nodes[0] );
+		$this->assertFalse( $single->had_graph_wrapper );
+
+		$list = Validator::parse( '[{"@context":"https://schema.org","@type":"Thing"},{"@type":"Thing"}]' );
+		$this->assertArrayNotHasKey( '@context', $list->nodes[0] );
+		$this->assertCount( 2, $list->nodes );
+
+		$graph = Validator::parse( '{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Thing"}]}' );
+		$this->assertArrayNotHasKey( '@context', $graph->nodes[0] );
+		$this->assertSame( 'https://schema.org', $graph->document['@context'] );
+	}
 }

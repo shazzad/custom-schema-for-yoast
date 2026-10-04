@@ -47,7 +47,10 @@ final class Document {
 		$nodes = self::assign_ids( $result->nodes, $base_url );
 
 		if ( $result->had_graph_wrapper && is_array( $result->document ) ) {
-			$document           = $result->document;
+			$document = $result->document;
+			if ( ! array_key_exists( '@context', $document ) ) {
+				$document = [ '@context' => self::CONTEXT ] + $document;
+			}
 			$document['@graph'] = $nodes;
 			return $document;
 		}

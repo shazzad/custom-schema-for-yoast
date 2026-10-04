@@ -42,7 +42,8 @@ final class Validator {
 		// A list of nodes.
 		if ( self::is_list( $decoded ) ) {
 			$error = self::check_nodes( $decoded );
-			return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, array_values( $decoded ), false, $decoded );
+			$nodes = self::strip_context( $decoded );
+			return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, $nodes, false, $decoded );
 		}
 
 		// A {"@graph": [...]} document.
@@ -51,12 +52,29 @@ final class Validator {
 				return ValidationResult::failure( '"@graph" must be an array of objects.' );
 			}
 			$error = self::check_nodes( $decoded['@graph'] );
-			return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, array_values( $decoded['@graph'] ), true, $decoded );
+			return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, self::strip_context( $decoded['@graph'] ), true, $decoded );
 		}
 
 		// A single node.
 		$error = self::check_nodes( [ $decoded ] );
-		return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, [ $decoded ], false, $decoded );
+		return $error ? ValidationResult::failure( $error ) : new ValidationResult( true, null, self::strip_context( [ $decoded ] ), false, $decoded );
+	}
+
+	/**
+	 * Drop a node-level "@context"; the document-level one is what matters.
+	 *
+	 * @param array<int, array<string, mixed>> $nodes Valid nodes.
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function strip_context( array $nodes ): array {
+		$out = [];
+		foreach ( $nodes as $node ) {
+			if ( is_array( $node ) ) {
+				unset( $node['@context'] );
+			}
+			$out[] = $node;
+		}
+		return $out;
 	}
 
 	/**

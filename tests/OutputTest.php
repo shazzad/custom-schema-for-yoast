@@ -28,4 +28,8 @@ final class OutputTest extends TestCase {
 		$json = Output::encode( [ 'url' => 'https://w4dev.com/x/' ] );
 		$this->assertSame( '{"url":"https:\/\/w4dev.com\/x\/"}', $json );
 	}
+
+	public function test_encode_failure_falls_back_to_empty_object(): void {
+		$this->assertSame( '{}', Output::encode( [ 'name' => "\xB1\x31" ] ) );
+	}
 }

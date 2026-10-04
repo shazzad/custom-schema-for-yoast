@@ -55,4 +55,25 @@ final class DocumentTest extends TestCase {
 		$this->assertSame( 'kept', $doc['custom'] );
 		$this->assertSame( self::BASE . '#csfy-1', $doc['@graph'][0]['@id'] );
 	}
+
+	public function test_standalone_adds_context_first_when_graph_document_lacks_one(): void {
+		$r   = Validator::parse( '{"custom":"kept","@graph":[{"@type":"Thing"}]}' );
+		$doc = Document::standalone( $r, self::BASE );
+		$this->assertSame( [ '@context', 'custom', '@graph' ], array_keys( $doc ) );
+		$this->assertSame( Document::CONTEXT, $doc['@context'] );
+	}
+
+	public function test_single_node_with_own_context_gets_top_level_context(): void {
+		$r   = Validator::parse( '{"@context":"https://schema.org","@type":"Thing"}' );
+		$doc = Document::standalone( $r, self::BASE );
+		$this->assertSame( 'https://schema.org', $doc['@context'] );
+		$this->assertArrayNotHasKey( '@context', $doc['@graph'][0] );
+	}
+
+	public function test_graph_numbering_counts_nodes_that_already_have_an_id(): void {
+		$r   = Validator::parse( '{"@graph":[{"@type":"Thing","@id":"https://x.test/#a"},{"@type":"Thing"}]}' );
+		$doc = Document::standalone( $r, self::BASE );
+		$this->assertSame( 'https://x.test/#a', $doc['@graph'][0]['@id'] );
+		$this->assertSame( self::BASE . '#csfy-2', $doc['@graph'][1]['@id'] );
+	}
 }
