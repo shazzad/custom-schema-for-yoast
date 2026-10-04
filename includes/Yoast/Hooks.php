@@ -66,7 +66,7 @@ final class Hooks {
 	public function register_append(): void {
 		add_filter( 'wpseo_schema_graph_pieces', [ $this, 'add_piece' ], 11, 2 );
 		if ( $this->set_main_entity && isset( $this->nodes[0]['@id'] ) ) {
-			add_filter( 'wpseo_schema_webpage', [ $this, 'set_main_entity' ], 11, 1 );
+			add_filter( 'wpseo_schema_webpage', [ $this, 'set_main_entity' ], 11, 3 );
 		}
 	}
 
@@ -97,10 +97,15 @@ final class Hooks {
 	/**
 	 * wpseo_schema_webpage callback. Overwrites any existing mainEntity — that is the checkbox's intent.
 	 *
-	 * @param array $webpage The WebPage piece.
+	 * @param array $webpage                The WebPage piece.
+	 * @param mixed $context                Meta_Tags_Context (unused).
+	 * @param mixed $graph_piece_generator  The generating piece; ours when our own WebPage-typed node is filtered.
 	 * @return array
 	 */
-	public function set_main_entity( $webpage ) {
+	public function set_main_entity( $webpage, $context = null, $graph_piece_generator = null ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Yoast's signature.
+		if ( $graph_piece_generator instanceof GraphPiece ) {
+			return $webpage;
+		}
 		if ( is_array( $webpage ) ) {
 			$webpage['mainEntity'] = [ '@id' => $this->nodes[0]['@id'] ];
 		}
