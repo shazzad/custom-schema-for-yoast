@@ -20,6 +20,10 @@ final class Plugin {
 	 * @return void
 	 */
 	public static function boot(): void {
-		// Components are registered here by later tasks.
+		Meta::register();
+
+		if ( is_admin() ) {
+			( new Admin\MetaBox() )->register();
+		}
 	}
 }
