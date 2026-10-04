@@ -14,7 +14,7 @@ Paste JSON-LD on any post or page and merge it into Yoast SEO's schema graph, or
 
 Yoast SEO builds a schema graph for every page but offers no way to add your own node — a SoftwareApplication, a Product, a Course — to that graph. Custom Schema for Yoast adds a meta box where you paste JSON-LD, and then:
 
-* **Append** (default): your nodes join Yoast's `@graph`, and the page's WebPage node gets `mainEntity` pointing at your first node. Breadcrumbs, Organization and WebSite stay intact.
+* **Append** (default): your nodes join Yoast's `@graph`, and, if the "Set as the page's main entity" checkbox is ticked (it is by default), the page's WebPage node gets `mainEntity` pointing at your first node. Breadcrumbs, Organization and WebSite stay intact.
 * **Replace**: Yoast's JSON-LD is switched off on that page and only your JSON is printed.
 
 If Yoast SEO is not active, your JSON is printed as a standalone `<script type="application/ld+json">`.
@@ -25,11 +25,15 @@ Accepted input: a single node, an array of nodes, or a full document with `@grap
 
 = What JSON shapes can I paste? =
 
-A single object with `@type`; an array of such objects; or an object with `@context` and `@graph`. In Append mode the `@graph` wrapper is dropped and its nodes are merged; in Replace mode the document is printed as you wrote it.
+A single object with `@type`; an array of such objects; or an object with `@context` and `@graph`. In Append mode the `@graph` wrapper is dropped and its nodes are merged; in Replace mode the JSON is re-encoded rather than printed byte for byte, and any node without an `@id` gets one added.
 
 = My node has no @id. What happens? =
 
 The plugin assigns `<page URL>#csfy-1` (and `#csfy-2`, …) so the mainEntity link always resolves.
+
+= Yoast's schema is disabled in its settings. What happens? =
+
+Yoast then prints no graph at all, so there is nothing to append to. Your JSON is printed as a standalone `<script type="application/ld+json">` in either mode, and the meta box tells you so.
 
 = What if the JSON is invalid? =
 

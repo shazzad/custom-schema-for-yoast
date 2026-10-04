@@ -1,0 +1,41 @@
+name: Release plugin zip
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    name: Build and attach zip
+    runs-on: ubuntu-22.04
+    if: github.event.release.target_commitish == 'main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer
+
+      - name: Version from tag (tags carry no v prefix)
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "PLUGIN_VERSION=${TAG#v}" >> "$GITHUB_ENV"
+          HEADER="$(grep -m1 '^ \* Version:' custom-schema-for-yoast.php | awk '{print $3}')"
+          if [ "$HEADER" != "${TAG#v}" ]; then
+            echo "Plugin header version $HEADER does not match tag $TAG" >&2
+            exit 1
+          fi
+
+      - run: composer validate --strict
+
+      - name: Build zip
+        run: bin/build
+
+      - name: Upload release asset
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "build/custom-schema-for-yoast-${PLUGIN_VERSION}.zip" --clobber

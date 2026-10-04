@@ -1,0 +1,7 @@
+.csfy-box .csfy-mode label { display: block; margin: 0 0 8px; }
+.csfy-box .csfy-mode .description { display: block; margin: 2px 0 0 24px; }
+.csfy-box textarea.code { font-family: Menlo, Consolas, monospace; font-size: 12px; line-height: 1.5; }
+.csfy-box .notice.inline { margin: 8px 0 0; }
+.csfy-box .csfy-live-status { margin: 4px 0 8px; font-weight: 600; }
+.csfy-box .csfy-live-status.is-error { color: #b32d2e; }
+.csfy-box .csfy-live-status.is-ok { color: #00a32a; }
