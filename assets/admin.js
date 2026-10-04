@@ -11,6 +11,61 @@
 		return;
 	}
 
+	// Live status: the block editor saves the box via fetch and never re-renders the PHP panel.
+	var statusLine = document.createElement( 'p' );
+	statusLine.className = 'csfy-live-status';
+	var anchor = textarea.parentNode;
+	anchor.parentNode.insertBefore( statusLine, anchor.nextSibling );
+
+	function setStatus( text, ok ) {
+		statusLine.textContent = text;
+		statusLine.className = 'csfy-live-status' + ( text ? ( ok ? ' is-ok' : ' is-error' ) : '' );
+	}
+
+	function checkJson() {
+		var raw = textarea.value.replace( /^\uFEFF/, '' ).trim();
+		var parsed, nodes, i;
+		if ( raw === '' ) {
+			setStatus( '', true );
+			return;
+		}
+		try {
+			parsed = JSON.parse( raw );
+		} catch ( e ) {
+			setStatus( 'Invalid JSON: ' + e.message, false );
+			return;
+		}
+		if ( parsed === null || typeof parsed !== 'object' ) {
+			setStatus( 'Expected an object or an array of objects.', false );
+			return;
+		}
+		if ( Array.isArray( parsed ) ) {
+			nodes = parsed;
+		} else if ( Array.isArray( parsed[ '@graph' ] ) ) {
+			nodes = parsed[ '@graph' ];
+		} else {
+			nodes = [ parsed ];
+		}
+		for ( i = 0; i < nodes.length; i++ ) {
+			if ( nodes[ i ] === null || typeof nodes[ i ] !== 'object' || Array.isArray( nodes[ i ] ) ) {
+				setStatus( 'Node ' + ( i + 1 ) + ' is not an object.', false );
+				return;
+			}
+			if ( ! nodes[ i ][ '@type' ] ) {
+				setStatus( 'Node ' + ( i + 1 ) + ' has no "@type".', false );
+				return;
+			}
+		}
+		setStatus( 'Valid JSON \u2014 ' + nodes.length + ' node(s)', true );
+	}
+
+	var timer = null;
+	textarea.addEventListener( 'input', function () {
+		window.clearTimeout( timer );
+		timer = window.setTimeout( checkJson, 300 );
+	} );
+	checkJson();
+
 	function template() {
 		var url = data.permalink || 'https://example.com/plugins/example/';
 		return {
@@ -34,6 +89,7 @@
 				return;
 			}
 			textarea.value = JSON.stringify( template(), null, 2 );
+			checkJson();
 			textarea.focus();
 		} );
 	}
