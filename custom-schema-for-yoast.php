@@ -31,12 +31,12 @@ if ( file_exists( CSFY_DIR . 'vendor/autoload.php' ) ) {
 } else {
 	// Bare checkout (no composer install): load our own classes; the updater is simply absent.
 	spl_autoload_register(
-		static function ( $class ) {
+		static function ( $class_name ) {
 			$prefix = 'Shazzad\\CustomSchemaForYoast\\';
-			if ( 0 !== strpos( $class, $prefix ) ) {
+			if ( 0 !== strpos( $class_name, $prefix ) ) {
 				return;
 			}
-			$file = CSFY_DIR . 'includes/' . str_replace( '\\', '/', substr( $class, strlen( $prefix ) ) ) . '.php';
+			$file = CSFY_DIR . 'includes/' . str_replace( '\\', '/', substr( $class_name, strlen( $prefix ) ) ) . '.php';
 			if ( is_readable( $file ) ) {
 				require_once $file;
 			}

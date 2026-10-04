@@ -71,7 +71,7 @@ final class MetaBox {
 		wp_enqueue_style( 'csfy-admin', CSFY_URL . 'assets/admin.css', [], CSFY_VERSION );
 		wp_enqueue_script( 'csfy-admin', CSFY_URL . 'assets/admin.js', [], CSFY_VERSION, true );
 
-		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, used to prefill a template.
+		$post_id   = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only, used to prefill a template.
 		$published = $post_id && 'publish' === get_post_status( $post_id );
 		wp_localize_script(
 			'csfy-admin',
@@ -173,7 +173,7 @@ final class MetaBox {
 		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST[ self::NONCE_FIELD ] ) ), self::NONCE_ACTION ) ) {
 			return;
 		}
-		if ( $post_id !== absint( $_POST['post_ID'] ?? 0 ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- cast to int by absint.
+		if ( absint( $_POST['post_ID'] ?? 0 ) !== $post_id ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- cast to int by absint.
 			return; // A copy created by another plugin during save_post.
 		}
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {

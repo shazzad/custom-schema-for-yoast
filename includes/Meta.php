@@ -40,7 +40,7 @@ final class Meta {
 	}
 
 	/**
-	 * register_post_meta for each public post type. Not exposed in REST.
+	 * Register post meta for each public post type. Not exposed in REST.
 	 *
 	 * @return void
 	 */
@@ -132,6 +132,6 @@ final class Meta {
 	 */
 	public static function main_entity( int $post_id ): bool {
 		$value = get_post_meta( $post_id, self::KEY_MAIN, true );
-		return '' === $value || '1' === $value; // default on
+		return '' === $value || '1' === $value; // Default on.
 	}
 }

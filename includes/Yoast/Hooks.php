@@ -80,7 +80,7 @@ final class Hooks {
 	}
 
 	/**
-	 * wpseo_schema_graph_pieces callback.
+	 * Callback for wpseo_schema_graph_pieces.
 	 *
 	 * @param array $pieces  Yoast pieces.
 	 * @param mixed $context Meta_Tags_Context (unused).
@@ -95,7 +95,7 @@ final class Hooks {
 	}
 
 	/**
-	 * wpseo_schema_webpage callback. Overwrites any existing mainEntity — that is the checkbox's intent.
+	 * Callback for wpseo_schema_webpage. Overwrites any existing mainEntity — that is the checkbox's intent.
 	 *
 	 * @param array $webpage                The WebPage piece.
 	 * @param mixed $context                Meta_Tags_Context (unused).
