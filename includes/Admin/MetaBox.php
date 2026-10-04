@@ -186,8 +186,12 @@ final class MetaBox {
 		update_post_meta( $post_id, Meta::KEY_JSON, $json );
 
 		$mode = isset( $_POST['csfy_mode'] ) ? sanitize_key( wp_unslash( $_POST['csfy_mode'] ) ) : Meta::MODE_APPEND;
-		update_post_meta( $post_id, Meta::KEY_MODE, Meta::sanitize_mode( $mode ) );
+		$mode = Meta::sanitize_mode( $mode );
+		update_post_meta( $post_id, Meta::KEY_MODE, $mode );
 
-		update_post_meta( $post_id, Meta::KEY_MAIN, isset( $_POST['csfy_main_entity'] ) ? '1' : '0' );
+		// The block editor submits via fetch, so the disabled checkbox is not sent in Replace mode; leave the stored choice alone then.
+		if ( Meta::MODE_APPEND === $mode ) {
+			update_post_meta( $post_id, Meta::KEY_MAIN, isset( $_POST['csfy_main_entity'] ) ? '1' : '0' );
+		}
 	}
 }
