@@ -173,6 +173,9 @@ final class MetaBox {
 		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST[ self::NONCE_FIELD ] ) ), self::NONCE_ACTION ) ) {
 			return;
 		}
+		if ( $post_id !== absint( $_POST['post_ID'] ?? 0 ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- cast to int by absint.
+			return; // A copy created by another plugin during save_post.
+		}
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
@@ -188,6 +191,12 @@ final class MetaBox {
 
 		// Raw JSON on purpose: it is validated by json_decode and only ever re-encoded on output, never echoed.
 		$json = is_string( $_POST['csfy_json'] ) ? $_POST['csfy_json'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- see above; update_post_meta unslashes.
+		if ( '' === trim( $json ) ) {
+			delete_post_meta( $post_id, Meta::KEY_JSON );
+			delete_post_meta( $post_id, Meta::KEY_MODE );
+			delete_post_meta( $post_id, Meta::KEY_MAIN );
+			return;
+		}
 		update_post_meta( $post_id, Meta::KEY_JSON, $json );
 
 		$mode = isset( $_POST['csfy_mode'] ) ? sanitize_key( wp_unslash( $_POST['csfy_mode'] ) ) : Meta::MODE_APPEND;
