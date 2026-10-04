@@ -49,6 +49,16 @@ final class Hooks {
 	}
 
 	/**
+	 * Yoast is available and its own schema output is switched on (Settings > Site features).
+	 * When it is off, Yoast suppresses the whole graph, so Append has nothing to join.
+	 *
+	 * @return bool
+	 */
+	public static function prints_schema(): bool {
+		return self::available() && ( ! class_exists( '\WPSEO_Options' ) || false !== \WPSEO_Options::get( 'enable_schema', true ) );
+	}
+
+	/**
 	 * Append mode.
 	 *
 	 * @return void

@@ -134,6 +134,10 @@ final class MetaBox {
 				<div class="notice notice-warning inline"><p><?php esc_html_e( 'Yoast SEO is not active; the JSON below is printed as a standalone script in either mode.', 'custom-schema-for-yoast' ); ?></p></div>
 			<?php endif; ?>
 
+			<?php if ( $yoast && ! YoastHooks::prints_schema() ) : ?>
+				<div class="notice notice-warning inline"><p><?php esc_html_e( 'Yoast SEO\'s schema output is disabled in its settings; the JSON below is printed as a standalone script in either mode.', 'custom-schema-for-yoast' ); ?></p></div>
+			<?php endif; ?>
+
 			<?php if ( ! $result->ok ) : ?>
 				<div class="notice notice-error inline"><p>
 					<strong><?php esc_html_e( 'Invalid JSON — nothing is output on the front end.', 'custom-schema-for-yoast' ); ?></strong>

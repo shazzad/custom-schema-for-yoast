@@ -48,7 +48,7 @@ final class Frontend {
 
 		$permalink = (string) get_permalink( $post_id );
 		$mode      = Meta::mode( $post_id );
-		$yoast     = YoastHooks::available();
+		$yoast     = YoastHooks::prints_schema();
 
 		if ( $yoast && Meta::MODE_APPEND === $mode ) {
 			$nodes = Document::assign_ids( $result->nodes, $permalink );
