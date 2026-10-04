@@ -1,0 +1,24 @@
+{
+	"name": "shazzad/custom-schema-for-yoast",
+	"description": "Paste JSON-LD per post and merge it into Yoast SEO's schema graph, or replace Yoast's schema on that post.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4",
+		"shazzad/github-plugin-updater": "^0.0.6"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.6"
+	},
+	"autoload": {
+		"psr-4": {
+			"Shazzad\\CustomSchemaForYoast\\": "includes/"
+		}
+	},
+	"config": {
+		"platform": {
+			"php": "7.4.33"
+		},
+		"sort-packages": true
+	}
+}

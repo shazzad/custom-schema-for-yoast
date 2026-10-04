@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Schema for Yoast">
+	<description>Custom Schema for Yoast WordPress Plugin Ruleset.</description>
+
+	<file>.</file>
+
+	<!-- Exclude paths -->
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/vendor-dev/*</exclude-pattern>
+	<exclude-pattern>*/wp/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/dist/*</exclude-pattern>
+	<exclude-pattern>languages/*</exclude-pattern>
+
+	<!-- Configs -->
+	<config name="minimum_supported_wp_version" value="6.0" />
+	<config name="testVersion" value="7.4-" />
+
+	<!-- Rules -->
+	<rule ref="WordPress">
+		<!-- One class per file, named for the class (Gate.php, Settings.php, …) — not the
+		     hyphenated-lowercase convention WordPress core itself uses. -->
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="custom-schema-for-yoast"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="Squiz.PHP">
+		<exclude name="Squiz.PHP.CommentedOutCode.Found"/>
+		<exclude name="Squiz.PHP.GlobalKeyword.NotAllowed"/>
+		<exclude name="Squiz.PHP.DisallowComparisonAssignment"/>
+		<!-- The `defined( 'ABSPATH' ) || exit;` guard is a WordPress idiom, not a stray statement. -->
+		<exclude name="Squiz.PHP.DisallowBooleanStatement.Found"/>
+		<exclude name="Squiz.PHP.DisallowInlineIf.Found"/>
+	</rule>
+
+	<rule ref="Generic.Commenting.Todo">
+		<exclude name="Generic.Commenting.Todo.TaskFound"/>
+		<exclude name="Generic.Commenting.Todo.CommentFound"/>
+	</rule>
+</ruleset>
